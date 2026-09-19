@@ -1,21 +1,20 @@
 <template>
-  <div class="panel" style="margin-top:16px">
-    <h3>🌊 瀑布图 (Spectrogram)</h3>
+  <ResultPanel title="🌊 瀑布图 (Spectrogram)" style="margin-top:16px">
     <canvas ref="cvs" width="800" height="200" class="waterfall-canvas"></canvas>
-  </div>
+  </ResultPanel>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue'
+import ResultPanel from './ResultPanel.vue'
+import { usePlotCanvas } from '../composables/usePlotCanvas'
+import { clearPlot } from '../utils/plot'
 import { useSignalStore } from '../store/signal'
 const store = useSignalStore()
-const cvs = ref<HTMLCanvasElement>()
 
-function draw() {
-  const c = cvs.value!; const ctx = c.getContext('2d')!; const W = c.width, H = c.height
+const cvs = usePlotCanvas((ctx, W, H) => {
   const rows = store.result?.waterfall || []
   if (!rows.length) return
-  ctx.fillStyle = '#0d1520'; ctx.fillRect(0, 0, W, H)
+  clearPlot(ctx, W, H)
   const rowH = H / rows.length
   for (let r = 0; r < rows.length; r++) {
     const vals = rows[r].values, n = vals.length
@@ -31,14 +30,9 @@ function draw() {
       ctx.fillRect(i * W / n, r * rowH, W / n + 1, rowH + 1)
     }
   }
-}
-
-onMounted(draw)
-watch(() => store.result, draw)
+})
 </script>
 
 <style scoped>
-.panel { background:#1a2332; border-radius:8px; padding:16px; border:1px solid #2a3a4a }
-.panel h3 { margin-bottom:8px; color:#90caf9; font-size:14px }
 .waterfall-canvas { display:block; width:100%; border-radius:4px }
 </style>
