@@ -1,6 +1,5 @@
 <template>
-  <div class="panel" style="margin-top:16px">
-    <h3>🔬 调制识别结果</h3>
+  <ResultPanel title="🔬 调制识别结果" :title-gap="12" style="margin-top:16px">
     <el-row :gutter="16">
       <el-col :span="8">
         <div class="result-card">
@@ -28,11 +27,12 @@
         <el-progress :percentage="Math.round(c.score * 100)" :stroke-width="8" :color="progressColor(c.score)" />
       </div>
     </div>
-  </div>
+  </ResultPanel>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import ResultPanel from './ResultPanel.vue'
 import { useSignalStore } from '../store/signal'
 const store = useSignalStore()
 const pct = computed(() => Math.round((store.result?.modulation.confidence || 0) * 100))
@@ -42,8 +42,6 @@ function progressColor(score: number) {
 </script>
 
 <style scoped>
-.panel { background:#1a2332; border-radius:8px; padding:16px; border:1px solid #2a3a4a }
-.panel h3 { margin-bottom:12px; color:#90caf9; font-size:14px }
 .result-card { text-align:center; padding:12px; background:#0d1520; border-radius:8px }
 .label { font-size:12px; color:#8899aa; margin-bottom:4px }
 .value { font-size:20px; font-weight:700; color:#e0e0e0 }
